@@ -1,8 +1,24 @@
-from flask import Flask, jsonify, abort, request
+from flask import Flask, jsonify, abort, request, current_app
 from pyteaser import SummarizeUrl
 from pyteaser import Summarize
+from functools import wraps
 
 app = Flask(__name__)
+
+
+def support_jsonp(f):
+    """Wraps JSONified output for JSONP"""
+
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        callback = request.args.get('callback', False)
+        if callback:
+            content = str(callback) + '(' + str(f().data) + ')'
+            return current_app.response_class(content, mimetype='application/json')
+        else:
+            return f(*args, **kwargs)
+
+    return decorated_function
 
 
 @app.route('/')
@@ -11,6 +27,7 @@ def hello():
 
 
 @app.route('/api/website')
+@support_jsonp
 def get_summary_for_url():
     url = request.args.get('url')
     summaries = SummarizeUrl(url)
