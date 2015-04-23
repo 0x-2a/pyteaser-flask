@@ -7,6 +7,7 @@ jieba==0.36.2
 Jinja2==2.7.3
 lxml==3.4.3
 MarkupSafe==0.23
+newrelic==2.50.0.39
 Pillow==2.8.1
 pyteaser==2.0
 Werkzeug==0.10.4
