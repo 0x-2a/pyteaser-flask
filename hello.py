@@ -2,6 +2,7 @@ from flask import Flask, jsonify, abort, request, current_app
 from pyteaser import SummarizeUrl
 from pyteaser import Summarize
 from functools import wraps
+import newrelic.agent
 
 app = Flask(__name__)
 
@@ -21,11 +22,12 @@ def support_jsonp(f):
     return decorated_function
 
 
+@newrelic.agent.wsgi_application()
 @app.route('/')
 def hello():
     return 'Hello World!'
 
-
+@newrelic.agent.wsgi_application()
 @app.route('/api/website')
 @support_jsonp
 def get_summary_for_url():
